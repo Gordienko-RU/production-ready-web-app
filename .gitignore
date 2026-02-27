@@ -11,10 +11,13 @@ dist/
 .env.*.local
 
 # IDE
-.idea/
-.vscode/
+.idea
+.vscode
 *.swp
 *.swo
+
+# Claude Code
+.claude/
 
 # OS
 .DS_Store
