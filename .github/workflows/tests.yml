@@ -1,4 +1,4 @@
-name: Tests
+name: CI/CD
 
 on:
   push:
@@ -15,3 +15,14 @@ jobs:
         run: docker build -t prodwebapp-test -f Dockerfile.dev .
       - name: Run tests
         run: docker run -e CI=true prodwebapp-test npm test
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production Docker image
+        run: docker build -t web-prod-app:latest .
+      - name: Deploy to Dokku
+        run: dokku git:from-image web-prod-app web-prod-app:latest
