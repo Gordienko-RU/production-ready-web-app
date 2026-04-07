@@ -18,11 +18,19 @@ jobs:
 
   deploy:
     needs: test
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      - name: Build production Docker image
-        run: docker build -t web-prod-app:latest .
-      - name: Deploy to Dokku
-        run: dokku git:from-image web-prod-app web-prod-app:latest
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*' 'node_modules/*'
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ secrets.EB_APPLICATION_NAME }}
+          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME }}
+          region: ${{ secrets.AWS_REGION }}
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
