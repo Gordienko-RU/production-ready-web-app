@@ -22,8 +22,14 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build React app
+        run: npm run build
       - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*' 'node_modules/*' 'docker-compose.yml' 'Dockerfile.dev'
+        run: |
+          printf 'FROM nginx\nCOPY build /usr/share/nginx/html\n' > Dockerfile.prod
+          zip -r deploy.zip build Dockerfile.prod
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
