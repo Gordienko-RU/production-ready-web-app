@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*' 'node_modules/*'
+        run: zip -r deploy.zip . -x '*.git*' 'node_modules/*' 'docker-compose.yml' 'Dockerfile.dev'
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
