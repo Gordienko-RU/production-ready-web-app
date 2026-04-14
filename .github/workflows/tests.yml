@@ -28,7 +28,7 @@ jobs:
         run: npm run build
       - name: Generate deployment package
         run: |
-          printf 'FROM nginx:alpine\nCOPY build /usr/share/nginx/html\n' > Dockerfile
+          printf 'FROM nginx:alpine\nCOPY build /usr/share/nginx/html\nEXPOSE 80\n' > Dockerfile
           zip -r deploy.zip build Dockerfile
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
